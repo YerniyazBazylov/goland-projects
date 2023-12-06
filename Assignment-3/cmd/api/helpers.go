@@ -1,7 +1,7 @@
 package main
 
 import (
-	"assignment3.ualikhan.net/internal/validator"
+	"assignment3.yerniyaz.net/internal/validator"
 	"encoding/json"
 	"errors"
 	"fmt"

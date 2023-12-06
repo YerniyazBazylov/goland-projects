@@ -1,7 +1,7 @@
 package data
 
 import (
-	"assignment3.ualikhan.net/internal/validator"
+	"assignment3.yerniaz.net/internal/validator"
 	"context"
 	"database/sql"
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type ClassicCars struct {
+type RemoteCars struct {
 	ID          int64     `json:"id"`
 	CreatedAt   time.Time `json:"-"`
 	Name        string    `json:"name"`
@@ -19,57 +19,57 @@ type ClassicCars struct {
 	Version     int32     `json:"version"`
 }
 
-func ValidateClassicCars(v *validator.Validator, classiccars *ClassicCars) {
-	v.Check(classiccars.Name != "", "name", "must be provided")
-	v.Check(len(classiccars.Name) <= 500, "name", "must not be more than 500 bytes long")
-	v.Check(classiccars.Year != 0, "year", "must be provided")
-	v.Check(classiccars.Year <= int32(time.Now().Year()), "year", "must not be in the future")
-	v.Check(classiccars.Cost != 0, "cost", "must be provided")
-	v.Check(classiccars.Cost > 0, "cost", "must be a positive integer")
+func ValidateRemoteCars(v *validator.Validator, remotecars *RemoteCars) {
+	v.Check(remotecars.Name != "", "name", "must be provided")
+	v.Check(len(remotecars.Name) <= 500, "name", "must not be more than 500 bytes long")
+	v.Check(remotecars.Year != 0, "year", "must be provided")
+	v.Check(remotecars.Year <= int32(time.Now().Year()), "year", "must not be in the future")
+	v.Check(remotecars.Cost != 0, "cost", "must be provided")
+	v.Check(remotecars.Cost > 0, "cost", "must be a positive integer")
 }
 
-type ClassicCarsModel struct {
+type RemoteCarsModel struct {
 	DB *sql.DB
 }
 
-func (m ClassicCarsModel) Insert(classiccars *ClassicCars) error {
+func (m RemoteCarsModel) Insert(remotecars *RemoteCars) error {
 	query := `
-		INSERT INTO classic_cars (name, year, cost, description)
+		INSERT INTO remote_cars (name, year, cost, description)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, version`
 
-	args := []interface{}{classiccars.Name, classiccars.Year, classiccars.Cost, classiccars.Description}
+	args := []interface{}{remotecars.Name, remotecars.Year, remotecars.Cost, remotecars.Description}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return m.DB.QueryRowContext(ctx, query, args...).Scan(&classiccars.ID, &classiccars.CreatedAt, &classiccars.Version)
+	return m.DB.QueryRowContext(ctx, query, args...).Scan(&remotecars.ID, &remotecars.CreatedAt, &remotecars.Version)
 }
 
-func (m ClassicCarsModel) Get(id int64) (*ClassicCars, error) {
+func (m RemoteCarsModel) Get(id int64) (*RemoteCars, error) {
 	if id < 1 {
 		return nil, ErrRecordNotFound
 	}
 
 	query := `
 		SELECT id, created_at, name, year, cost, description, version
-		FROM classic_cars
+		FROM remote_cars
 		WHERE id = $1`
 
-	var classiccars ClassicCars
+	var remotecars RemoteCars
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer cancel()
 
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&classiccars.ID,
-		&classiccars.CreatedAt,
-		&classiccars.Name,
-		&classiccars.Year,
-		&classiccars.Cost,
-		&classiccars.Description,
-		&classiccars.Version,
+		&remotecars.ID,
+		&remotecars.CreatedAt,
+		&remotecars.Name,
+		&remotecars.Year,
+		&remotecars.Cost,
+		&remotecars.Description,
+		&remotecars.Version,
 	)
 
 	if err != nil {
@@ -81,29 +81,29 @@ func (m ClassicCarsModel) Get(id int64) (*ClassicCars, error) {
 		}
 	}
 
-	return &classiccars, nil
+	return &remotecars, nil
 }
 
-func (m ClassicCarsModel) Update(classiccars *ClassicCars) error {
+func (m RemoteCarsModel) Update(remotecars *RemoteCars) error {
 	query := `
-		UPDATE classic_cars
+		UPDATE remote_cars
 		SET name = $1, year = $2, cost = $3, description = $4, version = version + 1
 		WHERE id = $5 AND version = $6
 		RETURNING version`
 
 	args := []interface{}{
-		classiccars.Name,
-		classiccars.Year,
-		classiccars.Cost,
-		classiccars.Description,
-		classiccars.ID,
-		classiccars.Version,
+		remotecars.Name,
+		remotecars.Year,
+		remotecars.Cost,
+		remotecars.Description,
+		remotecars.ID,
+		remotecars.Version,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&classiccars.Version)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&remotecars.Version)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -115,13 +115,13 @@ func (m ClassicCarsModel) Update(classiccars *ClassicCars) error {
 	return nil
 }
 
-func (m ClassicCarsModel) Delete(id int64) error {
+func (m RemoteCarsModel) Delete(id int64) error {
 	if id < 1 {
 		return ErrRecordNotFound
 	}
 
 	query := `
-		DELETE FROM classic_cars
+		DELETE FROM remote_cars
 		WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -144,10 +144,10 @@ func (m ClassicCarsModel) Delete(id int64) error {
 	return nil
 }
 
-func (m ClassicCarsModel) GetAll(name string, filters Filters) ([]*ClassicCars, Metadata, error) {
+func (m RemoteCarsModel) GetAll(name string, filters Filters) ([]*RemoteCars, Metadata, error) {
 	query := fmt.Sprintf(`
 		SELECT  count(*) OVER(), id, created_at, name, year, cost, description, version
-		FROM classic_cars
+		FROM remote_cars
 		WHERE (to_tsvector('simple', name) @@ plainto_tsquery('simple', $1) OR $1 = '')
 		ORDER BY %s %s, id ASC
 		LIMIT $2 OFFSET $3`, filters.sortColumn(), filters.sortDirection())
@@ -165,26 +165,26 @@ func (m ClassicCarsModel) GetAll(name string, filters Filters) ([]*ClassicCars, 
 	defer rows.Close()
 
 	totalRecords := 0
-	classiccars := []*ClassicCars{}
+	remotecars := []*RemoteCars{}
 
 	for rows.Next() {
-		var classiccar ClassicCars
+		var remotecar RemoteCars
 
 		err := rows.Scan(
 			&totalRecords,
-			&classiccar.ID,
-			&classiccar.CreatedAt,
-			&classiccar.Name,
-			&classiccar.Year,
-			&classiccar.Cost,
-			&classiccar.Description,
-			&classiccar.Version,
+			&remotecar.ID,
+			&remotecar.CreatedAt,
+			&remotecar.Name,
+			&remotecar.Year,
+			&remotecar.Cost,
+			&remotecar.Description,
+			&remotecar.Version,
 		)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 
-		classiccars = append(classiccars, &classiccar)
+		remotecars = append(remotecars, &remotecar)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -193,6 +193,6 @@ func (m ClassicCarsModel) GetAll(name string, filters Filters) ([]*ClassicCars, 
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
 
-	return classiccars, metadata, nil
+	return remotecars, metadata, nil
 
 }

@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS remote_cars_title_idx;

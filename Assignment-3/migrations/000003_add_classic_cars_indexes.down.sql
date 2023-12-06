@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS classic_cars_title_idx;

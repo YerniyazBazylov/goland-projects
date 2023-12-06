@@ -1,14 +1,14 @@
 package main
 
 import (
-	"assignment3.ualikhan.net/internal/data"
-	"assignment3.ualikhan.net/internal/validator"
+	"assignment3.yerniyaz.net/internal/data"
+	"assignment3.yerniyaz.net/internal/validator"
 	"errors"
 	"fmt"
 	"net/http"
 )
 
-func (app *application) createClassicCarsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) createRemoteCarsHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Name        string    `json:"name"`
 		Year        int32     `json:"year"`
@@ -22,7 +22,7 @@ func (app *application) createClassicCarsHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	classiccars := &data.ClassicCars{
+	remotecars := &data.RemoteCars{
 		Name:        input.Name,
 		Year:        input.Year,
 		Cost:        input.Cost,
@@ -31,34 +31,34 @@ func (app *application) createClassicCarsHandler(w http.ResponseWriter, r *http.
 
 	v := validator.New()
 
-	if data.ValidateClassicCars(v, classiccars); !v.Valid() {
+	if data.ValidateRemoteCars(v, remotecars); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	err = app.models.ClassicCars.Insert(classiccars)
+	err = app.models.RemoteCars.Insert(remotecars)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
 	headers := make(http.Header)
-	headers.Set("Location", fmt.Sprintf("/v1/classic-cars/%d", classiccars.ID))
+	headers.Set("Location", fmt.Sprintf("/v1/remote-cars/%d", remotecars.ID))
 
-	err = app.writeJSON(w, http.StatusCreated, envelope{"classiccars": classiccars}, headers)
+	err = app.writeJSON(w, http.StatusCreated, envelope{"remotecars": remotecars}, headers)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
 }
 
-func (app *application) showClassicCarsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) showRemoteCarsHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
 		app.notFoundResponse(w, r)
 		return
 	}
 
-	classiccars, err := app.models.ClassicCars.Get(id)
+	remotecars, err := app.models.RemoteCars.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -68,21 +68,21 @@ func (app *application) showClassicCarsHandler(w http.ResponseWriter, r *http.Re
 		}
 		return
 	}
-	err = app.writeJSON(w, http.StatusOK, envelope{"classiccars": classiccars}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"classiccars": remotecars}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
 
 }
 
-func (app *application) updateClassicCarsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) updateRemoteCarsHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
 		app.notFoundResponse(w, r)
 		return
 	}
 
-	classiccars, err := app.models.ClassicCars.Get(id)
+	remotecars, err := app.models.RemoteCars.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -107,25 +107,25 @@ func (app *application) updateClassicCarsHandler(w http.ResponseWriter, r *http.
 	}
 
 	if input.Name != nil {
-		classiccars.Name = *input.Name
+		remotecars.Name = *input.Name
 	}
 	if input.Year != nil {
-		classiccars.Year = *input.Year
+		remotecars.Year = *input.Year
 	}
 	if input.Cost != nil {
-		classiccars.Cost = *input.Cost
+		remotecars.Cost = *input.Cost
 	}
 	if input.Description != nil {
-		classiccars.Description = *input.Description
+		remotecars.Description = *input.Description
 	}
 
 	v := validator.New()
-	if data.ValidateClassicCars(v, classiccars); !v.Valid() {
+	if data.ValidateRemoteCars(v, remotecars); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	err = app.models.ClassicCars.Update(classiccars)
+	err = app.models.RemoteCars.Update(remotecars)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrEditConflict):
@@ -136,20 +136,20 @@ func (app *application) updateClassicCarsHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"classiccars": classiccars}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"remotecars": remotecars}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
 }
 
-func (app *application) deleteClassicCarsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) deleteRemoteCarsHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
 		app.notFoundResponse(w, r)
 		return
 	}
 
-	err = app.models.ClassicCars.Delete(id)
+	err = app.models.RemoteCars.Delete(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -160,13 +160,13 @@ func (app *application) deleteClassicCarsHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"message": "classic_car successfully deleted"}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"message": "remote_car successfully deleted"}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
 }
 
-func (app *application) listClassicCarsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) listRemoteCarsHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Name        string
 		Description string
@@ -190,13 +190,13 @@ func (app *application) listClassicCarsHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	classiccars, metadata, err := app.models.ClassicCars.GetAll(input.Name, input.Filters)
+	remotecars, metadata, err := app.models.RemoteCars.GetAll(input.Name, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"movies": classiccars, "metadata": metadata}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"movies": remotecars, "metadata": metadata}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

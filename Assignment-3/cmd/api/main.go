@@ -1,8 +1,8 @@
 package main
 
 import (
-	"assignment3.ualikhan.net/internal/data"
-	"assignment3.ualikhan.net/internal/jsonlog"
+	"assignment3.yerniyaz.net/internal/data"
+	"assignment3.yerniyaz.net/internal/jsonlog"
 	"context"
 	"database/sql"
 	"flag"

@@ -11,11 +11,11 @@ var (
 )
 
 type Models struct {
-	ClassicCars ClassicCarsModel
+	RemoteCars RemoteCarsModel
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
-		ClassicCars: ClassicCarsModel{DB: db},
+		RemoteCars: RemoteCarsModel{DB: db},
 	}
 }

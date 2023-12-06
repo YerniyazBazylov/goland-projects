@@ -1,7 +1,7 @@
 package data
 
 import (
-	"assignment3.ualikhan.net/internal/validator"
+	"assignment3.yerniyaz.net/internal/validator"
 	"math"
 	"strings"
 )

@@ -13,11 +13,11 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 
-	router.HandlerFunc(http.MethodGet, "/v1/classic-cars", app.listClassicCarsHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/classic-cars", app.createClassicCarsHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/classic-cars/:id", app.showClassicCarsHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/classic-cars/:id", app.updateClassicCarsHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/classic-cars/:id", app.deleteClassicCarsHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/remote-cars", app.listRemoteCarsHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/remote-cars", app.createRemoteCarsHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/remote-cars/:id", app.showRemoteCarsHandler)
+	router.HandlerFunc(http.MethodPatch, "/v1/remote-cars/:id", app.updateRemoteCarsHandler)
+	router.HandlerFunc(http.MethodDelete, "/v1/remote-cars/:id", app.deleteRemoteCarsHandler)
 
 	return app.recoverPanic(app.rateLimit(router))
 
