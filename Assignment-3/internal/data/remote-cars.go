@@ -1,7 +1,7 @@
 package data
 
 import (
-	"assignment3.yerniaz.net/internal/validator"
+	"assignment3.yerniyaz.net/internal/validator"
 	"context"
 	"database/sql"
 	"errors"

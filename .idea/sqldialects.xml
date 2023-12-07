@@ -5,5 +5,7 @@
     <file url="file://$PROJECT_DIR$/Assignment-2/migrations/000001_create_classic_cars_table.up.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Assignment-2/migrations/000002_add_classic_cars_check_constraints.down.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Assignment-2/migrations/000002_add_classic_cars_check_constraints.up.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Assignment-3/migrations/000001_create_remote_cars_table.down.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Assignment-3/migrations/000001_create_remote_cars_table.up.sql" dialect="GenericSQL" />
   </component>
 </project>

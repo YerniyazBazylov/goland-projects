@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  greenlight:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: greenlight-container
+    environment:
+      - GREENGLIGHT_DB_DSN=postgres://yerniaz:1234@db:5432/greenlight?sslmode=disable
+      - PORT=4000
+    networks:
+      - dev
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: yerniaz
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: greenlight
+    networks:
+      - dev
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+
+
+
+networks:
+  dev:
+    driver: bridge
+
+volumes:
+  postgres:
